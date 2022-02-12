@@ -1,8 +1,48 @@
 <script>
 	import Dropzone from 'svelte-file-dropzone';
+	import { fetchData, defaultData, imgUrl } from '$lib/api';
+	import PreviewImage from '$lib/PreviewImage.svelte';
+	import { Circle2 } from 'svelte-loading-spinners';
+import Input from '$lib/Input.svelte';
 
-	function fileSelect(event) {
+	let image;
+	let imageStatus;
+	let html = '';
 
+	function fileSelect({ detail: { acceptedFiles } }) {
+		const file = acceptedFiles[0];
+		const reader = new FileReader();
+		reader.addEventListener('load', function () {
+			image = reader.result;
+			imageStatus = 'local';
+			sendImage(image);
+		});
+
+		reader.readAsDataURL(file);
+	}
+
+	async function sendImage(base64) {
+		const res = await fetchData('api', {
+			body: JSON.stringify({
+				...defaultData,
+				params: [base64]
+			})
+		});
+
+		imageStatus = 'server';
+		getScheme();
+	}
+
+	async function getScheme() {
+		const res = await fetchData('api', {
+			body: JSON.stringify({
+				...defaultData,
+				method: 'get_schema_org'
+			})
+		});
+
+		const { result } = await res.json();
+		html = result;
 	}
 </script>
 
@@ -34,13 +74,48 @@
 	</li>
 </ol>
 
-<Dropzone
-	on:drop={fileSelect}
-	accept="image/*"
-	multiple={false}
-	containerClasses="dropzone"
-	containerStyles="background-color: #1d4ed8"
-/>
+<form class="mt-4">
+	<div class="grid xl:grid-cols-2 xl:gap-6">
+		<Input id="https://site.example"/>
+		<Input id="images"/>
+	</div>
+	<Input id="alt"/>
+	<Input id="meta"/>
+	<Input id="desc"/>
+	<Input id="thumbnail"/>
+	<button
+		type="submit"
+		class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+		>Submit</button
+	>
+</form>
+
+<div class="flex content-center items-center mt-4">
+	{#if imageStatus == 'local'}
+		<PreviewImage src={image}>
+			<div class="px-4">
+				<Circle2 size="60" color="#FF3E00" unit="px" duration="1s" />
+			</div>
+			<span class="text-green-500">Изображение загружается</span>
+		</PreviewImage>
+	{:else if imageStatus == 'server'}
+		<PreviewImage src={imgUrl}>
+			<span class="px-4 text-blue-300">Изображение загружено</span>
+		</PreviewImage>
+	{:else}
+		<Dropzone
+			on:drop={fileSelect}
+			accept="image/*"
+			multiple={false}
+			containerClasses="dropzone"
+			containerStyles="background-color: #1d4ed8"
+		/>
+	{/if}
+</div>
+
+<textarea class="mt-4 min-h-[200px] border-2 border-indigo-500/100 w-full">
+	{html}
+</textarea>
 
 <style>
 	:global(.dropzone) {
