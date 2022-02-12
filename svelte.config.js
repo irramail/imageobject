@@ -1,13 +1,8 @@
-import adapter from '@sveltejs/adapter-auto';
-// import { windi } from "svelte-windicss-preprocess";
+// import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-node';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	// preprocess: [
-	// 	windi({
-	// 		devTools: { enabled: true }
-	// 	})
-	// ],
 	kit: {
 		adapter: adapter()
 	}
