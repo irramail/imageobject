@@ -42,46 +42,58 @@
 			imageStatus = 'server';
 			getScheme();
 		} catch (error) {
-			console.error('send image error',error)
-			imageStatus = 'error';
-		}	
+			console.error('send image error', error);
+			// imageStatus = 'error';
+			imageStatus = 'server';
+		}
 	}
 
 	async function existImg() {
-		const res = await fetchData('api', {
-			body: JSON.stringify({
-				...defaultData,
-				method: 'exists_img'
-			})
-		});
+		try {
+			const res = await fetchData('api', {
+				body: JSON.stringify({
+					...defaultData,
+					method: 'exists_img'
+				})
+			});
 
-		const { result } = await res.json();
-
-		if (result === 'false') {
-			getScheme();
+			const { result } = await res.json();
+			if (result === 'false') {
+				getScheme();
+			}
+		} catch (error) {
+			console.error('exist image error');
 		}
 	}
 
 	async function getScheme() {
-		const res = await fetchData('api', {
-			body: JSON.stringify({
-				...defaultData,
-				method: 'get_schema_org'
-			})
-		});
+		try {
+			const res = await fetchData('api', {
+				body: JSON.stringify({
+					...defaultData,
+					method: 'get_schema_org'
+				})
+			});
 
-		const { result } = await res.json();
-		html = result;
+			const { result } = await res.json();
+			html = result;
+		} catch (error) {
+			console.error('get scheme network error');
+		}
 	}
 
 	async function sendSettings(data) {
-		const res = await fetchData('api', {
-			body: JSON.stringify({
-				...defaultData,
-				method: 'set',
-				params: [data]
-			})
-		});
+		try {
+			const res = await fetchData('api', {
+				body: JSON.stringify({
+					...defaultData,
+					method: 'set',
+					params: [data]
+				})
+			});
+		} catch (error) {
+			console.error('set settings network error');
+		}
 	}
 
 	async function settingsSubmit() {
@@ -95,12 +107,18 @@
 	async function retry() {
 		settingsSubmit();
 		html = '';
-		const res = await fetchData('api', {
-			body: JSON.stringify({
-				...defaultData,
-				method: 'reTry'
-			})
-		});
+		imageStatus = 'load';
+		try {
+			const res = await fetchData('api', {
+				body: JSON.stringify({
+					...defaultData,
+					method: 'reTry'
+				})
+			});
+			imageStatus = 'server';
+		} catch (error) {
+			console.error('retry network error');
+		}
 	}
 
 	setInterval(existImg, 3000);
@@ -149,8 +167,13 @@
 				>
 			</form>
 		</PreviewImage>
+	{:else if imageStatus == 'load'}
+		<div class="px-4">
+			<Circle2 size="60" color="#FF3E00" unit="px" duration="1s" />
+		</div>
+		<span class="text-green-500">Изображение перезагружается</span>
 	{:else if imageStatus == 'error'}
-		<p class="text-red-500">Невозможно соединиться с сервером попробуйте повторить чуть позже </p>
+		<p class="text-red-500">Невозможно соединиться с сервером попробуйте повторить чуть позже</p>
 	{:else}
 		<Dropzone
 			on:drop={fileSelect}

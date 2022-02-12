@@ -1,4 +1,4 @@
-export const domain = 'https://imageobject.seodogs.ru';
+export const domain = 'http://imageobject.seodogs.ru';
 export const defaultData = { jsonrpc: '2.0', method: 'set_img', id: 1, params: [] };
 export const imgUrl = `${domain}/schema/schemaImg_1.jpg?nocache=${Math.floor(Math.random() * 10000000)}`;
 export const downloadUrl = `${domain}/schema/schema.tgz`;
