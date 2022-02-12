@@ -1,8 +1,8 @@
 <script>
 	import Dropzone from 'svelte-file-dropzone';
+	import { Circle2 } from 'svelte-loading-spinners';
 	import { fetchData, defaultData, imgUrl, downloadUrl } from '$lib/api';
 	import PreviewImage from '$lib/PreviewImage.svelte';
-	import { Circle2 } from 'svelte-loading-spinners';
 	import InputText from '$lib/InputText.svelte';
 	import ImageHeader from '$lib/ImageHeader.svelte';
 
@@ -157,7 +157,7 @@
 			<span class="text-green-500">Изображение загружается</span>
 		</PreviewImage>
 	{:else if imageStatus == 'server'}
-		<PreviewImage src={imgUrl}>
+		<PreviewImage src={imgUrl()}>
 			<span class="px-4 text-blue-300">Изображение загружено</span>
 			<form method="get" action={downloadUrl}>
 				<button
