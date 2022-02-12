@@ -1,13 +1,12 @@
 <script>
 	import Dropzone from 'svelte-file-dropzone';
-	import { fetchData, defaultData, imgUrl } from '$lib/api';
+	import { fetchData, defaultData, imgUrl, downloadUrl } from '$lib/api';
 	import PreviewImage from '$lib/PreviewImage.svelte';
 	import { Circle2 } from 'svelte-loading-spinners';
 	import InputText from '$lib/InputText.svelte';
 	import ImageHeader from '$lib/ImageHeader.svelte';
 
 	let image;
-	let display = false;
 	let imageStatus;
 	let html = '';
 	let settings = {
@@ -40,6 +39,7 @@
 			})
 		});
 
+		imageStatus = 'server';
 		getScheme();
 	}
 
@@ -52,11 +52,11 @@
 		});
 
 		const { result } = await res.json();
-		
+
 		if (result === 'false') {
 			getScheme();
 		} else {
-			display = false
+			display = false;
 		}
 	}
 
@@ -70,9 +70,6 @@
 
 		const { result } = await res.json();
 		html = result;
-
-		imageStatus = 'server';
-		display = true
 	}
 
 	async function sendSettings(data) {
@@ -91,7 +88,15 @@
 		data +=
 			'1:1_320x320,640x640,1280x1280,1920x1920;4:3_320x240,640x480,1280x960,1920x1440;16:9_320x180,640x360,854x480,1280x720,1920x1080';
 		await sendSettings(data);
+	}
 
+	async function retry() {
+		const res = await fetchData('api', {
+			body: JSON.stringify({
+				...defaultData,
+				method: 'reTry'
+			})
+		});
 	}
 
 	setInterval(existImg, 3000);
@@ -107,9 +112,16 @@
 			</div>
 			<span class="text-green-500">Изображение загружается</span>
 		</PreviewImage>
-	{:else if (imageStatus == 'server' && display == true)}
+	{:else if imageStatus == 'server'}
 		<PreviewImage src={imgUrl}>
 			<span class="px-4 text-blue-300">Изображение загружено</span>
+			<form method="get" action={downloadUrl}>
+				<button
+					type="submit"
+					class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+					>Скачать</button
+				>
+			</form>
 		</PreviewImage>
 	{:else}
 		<Dropzone
@@ -137,6 +149,12 @@
 		type="submit"
 		class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 		>Submit</button
+	>
+	<button
+		type="button"
+		on:click={retry}
+		class="text-white bg-green-500 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+		>Retry</button
 	>
 </form>
 
