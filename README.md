@@ -15,3 +15,5 @@ npm run dev
 ```bash
 npm run build
 ```
+
+Статистика будет в папке build
