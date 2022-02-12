@@ -1,8 +1,16 @@
+<script>
+	import Dropzone from 'svelte-file-dropzone';
+
+	function fileSelect(event) {
+
+	}
+</script>
+
 <svelte:head>
 	<title>ImageObject - Schema.org Generator</title>
 </svelte:head>
 
-<h1 class="mt-4 text-slate-900 text-4xl tracking-tight font-extrabold sm:text-3xl dark:text-white">
+<h1 class="mt-4 text-slate-900 text-4xl tracking-tight font-extrabold sm:text-3xl ">
 	ImageObject - <a
 		class="text-blue-500 hover:text-blue-500 visited:text-blue-500"
 		href="https://schema.org/">Schema.org</a
@@ -25,3 +33,17 @@
 		будет запущен повторно с последним загруженным изображением.
 	</li>
 </ol>
+
+<Dropzone
+	on:drop={fileSelect}
+	accept="image/*"
+	multiple={false}
+	containerClasses="dropzone"
+	containerStyles="background-color: #1d4ed8"
+/>
+
+<style>
+	:global(.dropzone) {
+		@apply mt-4;
+	}
+</style>

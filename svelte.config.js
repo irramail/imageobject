@@ -4,7 +4,9 @@ import { windi } from "svelte-windicss-preprocess";
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	preprocess: [
-		windi({})
+		windi({
+			devTools: { enabled: true }
+		})
 	],
 	kit: {
 		adapter: adapter()
