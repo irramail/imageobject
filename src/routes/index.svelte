@@ -52,7 +52,7 @@
 		});
 
 		const { result } = await res.json();
-		console.log(result, result=='true')
+		
 		if (result === 'false') {
 			getScheme();
 		} else {
