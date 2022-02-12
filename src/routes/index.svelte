@@ -31,55 +31,69 @@
 	}
 
 	async function sendImage(base64) {
-		const res = await fetchData('api', {
-			body: JSON.stringify({
-				...defaultData,
-				params: [base64],
-				method: 'set_img'
-			})
-		});
-
-		imageStatus = 'server';
-		getScheme();
+		try {
+			const res = await fetchData('api', {
+				body: JSON.stringify({
+					...defaultData,
+					params: [base64],
+					method: 'set_img'
+				})
+			});
+			imageStatus = 'server';
+			getScheme();
+		} catch (error) {
+			console.error('send image error', error);
+			// imageStatus = 'error';
+			imageStatus = 'server';
+		}
 	}
 
 	async function existImg() {
-		const res = await fetchData('api', {
-			body: JSON.stringify({
-				...defaultData,
-				method: 'exists_img'
-			})
-		});
+		try {
+			const res = await fetchData('api', {
+				body: JSON.stringify({
+					...defaultData,
+					method: 'exists_img'
+				})
+			});
 
-		const { result } = await res.json();
-
-		if (result === 'false') {
-			getScheme();
-		} else {
-			display = false;
+			const { result } = await res.json();
+			if (result === 'false') {
+				getScheme();
+			}
+		} catch (error) {
+			console.error('exist image error');
 		}
 	}
 
 	async function getScheme() {
-		const res = await fetchData('api', {
-			body: JSON.stringify({
-				...defaultData,
-				method: 'get_schema_org'
-			})
-		});
+		try {
+			const res = await fetchData('api', {
+				body: JSON.stringify({
+					...defaultData,
+					method: 'get_schema_org'
+				})
+			});
 
-		const { result } = await res.json();
-		html = result;
+			const { result } = await res.json();
+			html = result;
+		} catch (error) {
+			console.error('get scheme network error');
+		}
 	}
 
 	async function sendSettings(data) {
-		const res = await fetchData('api', {
-			body: JSON.stringify({
-				...defaultData,
-				method: 'set',
-				params: [data]
-			})
-		});
+		try {
+			const res = await fetchData('api', {
+				body: JSON.stringify({
+					...defaultData,
+					method: 'set',
+					params: [data]
+				})
+			});
+		} catch (error) {
+			console.error('set settings network error');
+		}
 	}
 
 	async function settingsSubmit() {
@@ -91,18 +105,48 @@
 	}
 
 	async function retry() {
-		const res = await fetchData('api', {
-			body: JSON.stringify({
-				...defaultData,
-				method: 'reTry'
-			})
-		});
+		settingsSubmit();
+		html = '';
+		imageStatus = 'load';
+		try {
+			const res = await fetchData('api', {
+				body: JSON.stringify({
+					...defaultData,
+					method: 'reTry'
+				})
+			});
+			imageStatus = 'server';
+		} catch (error) {
+			console.error('retry network error');
+		}
 	}
 
 	setInterval(existImg, 3000);
 </script>
 
 <ImageHeader />
+
+<form class="mt-4" on:submit|preventDefault={settingsSubmit}>
+	<div class="grid xl:grid-cols-2 xl:gap-6">
+		<InputText id="site.example" bind:inputvalue={settings.site} />
+		<InputText id="images" bind:inputvalue={settings.img} />
+	</div>
+	<InputText id="alt" bind:inputvalue={settings.alt} />
+	<InputText id="meta" bind:inputvalue={settings.meta} />
+	<InputText id="desc" bind:inputvalue={settings.desc} />
+	<InputText id="thumbnail" bind:inputvalue={settings.thumb} />
+	<button
+		type="submit"
+		class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+		>Submit</button
+	>
+	<button
+		type="button"
+		on:click={retry}
+		class="text-white bg-green-500 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+		>Retry</button
+	>
+</form>
 
 <div class="flex content-center items-center mt-4">
 	{#if imageStatus == 'local'}
@@ -123,6 +167,13 @@
 				>
 			</form>
 		</PreviewImage>
+	{:else if imageStatus == 'load'}
+		<div class="px-4">
+			<Circle2 size="60" color="#FF3E00" unit="px" duration="1s" />
+		</div>
+		<span class="text-green-500">Изображение перезагружается</span>
+	{:else if imageStatus == 'error'}
+		<p class="text-red-500">Невозможно соединиться с сервером попробуйте повторить чуть позже</p>
 	{:else}
 		<Dropzone
 			on:drop={fileSelect}
@@ -135,28 +186,6 @@
 		</Dropzone>
 	{/if}
 </div>
-
-<form class="mt-4" on:submit|preventDefault={settingsSubmit}>
-	<div class="grid xl:grid-cols-2 xl:gap-6">
-		<InputText id="https://site.example" bind:inputvalue={settings.site} />
-		<InputText id="images" bind:inputvalue={settings.img} />
-	</div>
-	<InputText id="alt" bind:inputvalue={settings.alt} />
-	<InputText id="meta" bind:inputvalue={settings.meta} />
-	<InputText id="desc" bind:inputvalue={settings.desc} />
-	<InputText id="thumbnail" bind:inputvalue={settings.thumb} />
-	<button
-		type="submit"
-		class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-		>Submit</button
-	>
-	<button
-		type="button"
-		on:click={retry}
-		class="text-white bg-green-500 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-		>Retry</button
-	>
-</form>
 
 <textarea class="mt-4 min-h-[200px] border-2 border-indigo-500/100 w-full">
 	{html}
