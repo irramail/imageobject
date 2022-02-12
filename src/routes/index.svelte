@@ -4,8 +4,10 @@
 	import PreviewImage from '$lib/PreviewImage.svelte';
 	import { Circle2 } from 'svelte-loading-spinners';
 	import InputText from '$lib/InputText.svelte';
+	import ImageHeader from '$lib/ImageHeader.svelte';
 
 	let image;
+	let display = false;
 	let imageStatus;
 	let html = '';
 	let settings = {
@@ -38,7 +40,6 @@
 			})
 		});
 
-		imageStatus = 'server';
 		getScheme();
 	}
 
@@ -51,8 +52,11 @@
 		});
 
 		const { result } = await res.json();
-		if (result) {
+		console.log(result, result=='true')
+		if (result === 'false') {
 			getScheme();
+		} else {
+			display = false
 		}
 	}
 
@@ -66,6 +70,9 @@
 
 		const { result } = await res.json();
 		html = result;
+
+		imageStatus = 'server';
+		display = true
 	}
 
 	async function sendSettings(data) {
@@ -76,10 +83,8 @@
 				params: [data]
 			})
 		});
-		await getScheme();
 	}
 
-	//"site|img|thumb|alt|meta|desc|1:1_320x320,640x640,1280x1280,1920x1920;4:3_320x240,640x480,1280x960,1920x1440;16:9_320x180,640x360,854x480,1280x720,1920x1080"
 	async function settingsSubmit() {
 		const { site, img, thumb, alt, meta, desc } = settings;
 		let data = `${site}|${settings.img}|${thumb}|${alt}|${meta}|${desc}|`;
@@ -87,44 +92,12 @@
 			'1:1_320x320,640x640,1280x1280,1920x1920;4:3_320x240,640x480,1280x960,1920x1440;16:9_320x180,640x360,854x480,1280x720,1920x1080';
 		await sendSettings(data);
 
-		// const res = await fetchData('api', {
-		// 	body: JSON.stringify({
-		// 		...defaultData,
-		// 		method: 'get_schema_org'
-		// 	})
-		// });
 	}
 
 	setInterval(existImg, 3000);
 </script>
 
-<svelte:head>
-	<title>ImageObject - Schema.org Generator</title>
-</svelte:head>
-
-<h1 class="mt-4 text-slate-900 text-4xl tracking-tight font-extrabold sm:text-3xl ">
-	ImageObject - <a
-		class="text-blue-500 hover:text-blue-500 visited:text-blue-500"
-		href="https://schema.org/">Schema.org</a
-	>
-	Generator
-</h1>
-
-<ol class="list-decimal mt-4">
-	<li>Заполнить все однострочные поля.</li>
-	<li>Отметить форматы изображения.</li>
-	<li>Нажать кнопку Set, чтобы сохранить и отправить настройки на сервер.</li>
-	<li>Справа вверху нажать на кнопку Upload Images и выбрать изображение формата JPG.</li>
-	<li>Подождать пока в многострочном текстовом поле появится сгенерированный html текст.</li>
-	<li>
-		Чтобы скачать архив с изображениями, следует нажать по ссылке Download (расположена внизу
-		рабочей области).
-	</li>
-	<li>
-		Поменять любое из полей или выбрать другой набор разрешений, нажать Retry, процесс генерации
-		будет запущен повторно с последним загруженным изображением.
-	</li>
-</ol>
+<ImageHeader />
 
 <div class="flex content-center items-center mt-4">
 	{#if imageStatus == 'local'}
@@ -134,7 +107,7 @@
 			</div>
 			<span class="text-green-500">Изображение загружается</span>
 		</PreviewImage>
-	{:else if imageStatus == 'server'}
+	{:else if (imageStatus == 'server' && display == true)}
 		<PreviewImage src={imgUrl}>
 			<span class="px-4 text-blue-300">Изображение загружено</span>
 		</PreviewImage>
