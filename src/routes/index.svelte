@@ -1,6 +1,7 @@
 <script>
 	import Dropzone from 'svelte-file-dropzone';
 	import { Circle2 } from 'svelte-loading-spinners';
+	import Clipboard from 'svelte-clipboard';
 	import { fetchData, defaultData, imgUrl, downloadUrl } from '$lib/api';
 	import PreviewImage from '$lib/PreviewImage.svelte';
 	import InputText from '$lib/InputText.svelte';
@@ -145,7 +146,7 @@
 	<button
 		type="button"
 		on:click={retry}
-		class="text-white bg-green-500 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+		class="mt-4 text-white bg-green-500 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
 	>
 		Retry
 	</button>
@@ -190,6 +191,16 @@
 		</Dropzone>
 	{/if}
 </div>
+
+<Clipboard text={html} let:copy>
+	<button
+		type="button"
+		on:click={copy}
+		class="mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+	>
+		Копировать
+	</button>
+</Clipboard>
 
 <textarea class="mt-4 min-h-[200px] border-2 border-indigo-500/100 w-full">
 	{html}
