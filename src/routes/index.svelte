@@ -117,6 +117,7 @@
 			});
 			imageStatus = 'server';
 		} catch (error) {
+			imageStatus = 'error';
 			console.error('retry network error');
 		}
 	}
