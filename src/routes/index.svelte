@@ -98,7 +98,7 @@
 
 	async function settingsSubmit() {
 		const { site, img, thumb, alt, meta, desc } = settings;
-		let data = `${site}|${settings.img}|${thumb}|${alt}|${meta}|${desc}|`;
+		let data = `${site}|${img}|${thumb}|${alt}|${meta}|${desc}|`;
 		data +=
 			'1:1_320x320,640x640,1280x1280,1920x1920;4:3_320x240,640x480,1280x960,1920x1440;16:9_320x180,640x360,854x480,1280x720,1920x1080';
 		await sendSettings(data);
