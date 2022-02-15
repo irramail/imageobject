@@ -127,16 +127,13 @@
 	}
 
 	onInterval(existImg, 3000);
-	onMount(() => {
-		ref.focus();
-	});
 </script>
 
 <ImageHeader />
 
 <form class="mt-4" on:submit|preventDefault={settingsSubmit}>
 	<div class="grid xl:grid-cols-2 xl:gap-6">
-		<InputText id="site.example" bind:inputvalue={settings.site} bind:ref />
+		<InputText id="site.example" bind:inputvalue={settings.site} />
 		<InputText id="images" bind:inputvalue={settings.img} />
 	</div>
 	<InputText id="alt" bind:inputvalue={settings.alt} />
