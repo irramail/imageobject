@@ -3,6 +3,7 @@
 	import { Circle2 } from 'svelte-loading-spinners';
 	import Clipboard from 'svelte-clipboard';
 	import { fetchData, defaultData, imgUrl, downloadUrl } from '$lib/api';
+	import { onInterval } from '$lib/utils';
 	import PreviewImage from '$lib/PreviewImage.svelte';
 	import InputText from '$lib/InputText.svelte';
 	import ImageHeader from '$lib/ImageHeader.svelte';
@@ -123,7 +124,7 @@
 		}
 	}
 
-	setInterval(existImg, 3000);
+	onInterval(existImg, 3000);
 </script>
 
 <ImageHeader />
