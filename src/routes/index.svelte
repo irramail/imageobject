@@ -10,7 +10,6 @@
 	import Button from '$lib/Button.svelte';
 
 	let image;
-	let ref;
 	let imageStatus;
 	let html = '';
 	let settings = {
@@ -36,7 +35,7 @@
 
 	async function sendImage(base64) {
 		try {
-			const res = await fetchData('api', {
+			await fetchData('api', {
 				body: JSON.stringify({
 					...defaultData,
 					params: [base64],
@@ -88,7 +87,7 @@
 
 	async function sendSettings(data) {
 		try {
-			const res = await fetchData('api', {
+			await fetchData('api', {
 				body: JSON.stringify({
 					...defaultData,
 					method: 'set',
@@ -113,7 +112,7 @@
 		html = '';
 		imageStatus = 'load';
 		try {
-			const res = await fetchData('api', {
+			await fetchData('api', {
 				body: JSON.stringify({
 					...defaultData,
 					method: 'reTry'

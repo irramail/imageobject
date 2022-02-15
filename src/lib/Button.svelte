@@ -2,8 +2,8 @@
 	export let type = 'button';
 	export let className = null;
 	export let bgBlue = true;
-	let blue = 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300';
-	let green = 'bg-green-500 hover:bg-green-600 focus:ring-green-300';
+	const blue = 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300';
+	const green = 'bg-green-500 hover:bg-green-600 focus:ring-green-300';
 </script>
 
 <button
