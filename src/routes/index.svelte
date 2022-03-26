@@ -4,6 +4,7 @@
 	import Clipboard from 'svelte-clipboard';
 	import { fetchData, defaultData, imgUrl, downloadUrl } from '$lib/api';
 	import { onInterval } from '$lib/utils';
+	import Checkbox from '$lib/Checkbox.svelte';
 	import PreviewImage from '$lib/PreviewImage.svelte';
 	import InputText from '$lib/InputText.svelte';
 	import ImageHeader from '$lib/ImageHeader.svelte';
@@ -139,6 +140,23 @@
 	<InputText id="meta" bind:inputvalue={settings.meta} />
 	<InputText id="desc" bind:inputvalue={settings.desc} />
 	<InputText id="thumbnail" bind:inputvalue={settings.thumb} />
+
+	<div class="flex  justify-center items-center flex-wrap">
+		<Checkbox value={'320x320'} />
+		<Checkbox value={'640x640'} />
+		<Checkbox value={'1280x1280'} />
+		<Checkbox value={'1920x1920'} />
+		<Checkbox value={'320x240'} />
+		<Checkbox value={'640x480'} />
+		<Checkbox value={'1280x960'} />
+		<Checkbox value={'1920x1440'} />
+		<Checkbox value={'320x180'} />
+		<Checkbox value={'640x360'} />
+		<Checkbox value={'854x480'} />
+		<Checkbox value={'1280x720'} />
+		<Checkbox value={'1920x1080'} />
+	</div>
+
 	<Button type="submit">Submit</Button>
 	<Button on:click={retry} className="mt-4" bgBlue={false}>Retry</Button>
 </form>
