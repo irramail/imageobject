@@ -4,7 +4,6 @@
 	import Clipboard from 'svelte-clipboard';
 	import { fetchData, defaultData, imgUrl, downloadUrl } from '$lib/api';
 	import { onInterval } from '$lib/utils';
-	import Checkbox from '$lib/Checkbox.svelte';
 	import PreviewImage from '$lib/PreviewImage.svelte';
 	import InputText from '$lib/InputText.svelte';
 	import ImageHeader from '$lib/ImageHeader.svelte';
@@ -21,6 +20,14 @@
 		meta: '',
 		desc: ''
 	};
+
+	let resolutions = [
+		'320x320','640x640','1280x1280','1920x1920','320x240','640x480','1280x960','1920x1440','320x180','640x360','854x480','1280x720','1920x1080'
+	];
+	
+	let checkedResolution = [
+		'320x320','640x640','1280x1280','1920x1920','320x240','640x480','1280x960','1920x1440','320x180','640x360','854x480','1280x720','1920x1080'
+	];
 
 	function fileSelect({ detail: { acceptedFiles } }) {
 		const file = acceptedFiles[0];
@@ -126,6 +133,9 @@
 		}
 	}
 
+	$: {
+		console.log(checkedResolution)
+	}
 	onInterval(existImg, 3000);
 </script>
 
@@ -142,19 +152,20 @@
 	<InputText id="thumbnail" bind:inputvalue={settings.thumb} />
 
 	<div class="flex  justify-center items-center flex-wrap">
-		<Checkbox value={'320x320'} />
-		<Checkbox value={'640x640'} />
-		<Checkbox value={'1280x1280'} />
-		<Checkbox value={'1920x1920'} />
-		<Checkbox value={'320x240'} />
-		<Checkbox value={'640x480'} />
-		<Checkbox value={'1280x960'} />
-		<Checkbox value={'1920x1440'} />
-		<Checkbox value={'320x180'} />
-		<Checkbox value={'640x360'} />
-		<Checkbox value={'854x480'} />
-		<Checkbox value={'1280x720'} />
-		<Checkbox value={'1920x1080'} />
+		{#each resolutions as resolution}
+			<label class="grow shrink basis-1/3">
+				<input
+					type="checkbox"
+					class="form-checkbox h-5 w-5 text-gray-600"
+					bind:group={checkedResolution}
+					value={resolution}
+					checked
+				/>
+				<span class="ml-2 text-gray-700">
+					{resolution}
+				</span>
+			</label>
+		{/each}
 	</div>
 
 	<Button type="submit">Submit</Button>
