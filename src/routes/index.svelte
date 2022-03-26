@@ -8,6 +8,7 @@
 	import InputText from '$lib/InputText.svelte';
 	import ImageHeader from '$lib/ImageHeader.svelte';
 	import Button from '$lib/Button.svelte';
+	import ResolutionGroup from '$lib/ResolutionGroup.svelte';
 
 	let image;
 	let imageStatus;
@@ -27,7 +28,8 @@
 		['16:9', ['320x180', '640x360', '854x480', '1280x720', '1920x1080']]
 	];
 
-	let checkedResolution = [
+	let resolutions
+	 = [
 		'320x320',
 		'640x640',
 		'1280x1280',
@@ -42,6 +44,8 @@
 		'1280x720',
 		'1920x1080'
 	];
+
+	let checkedResolution = resolutions;
 
 	function fileSelect({ detail: { acceptedFiles } }) {
 		const file = acceptedFiles[0];
@@ -68,7 +72,6 @@
 			getScheme();
 		} catch (error) {
 			console.error('send image error', error);
-			// imageStatus = 'error';
 			imageStatus = 'server';
 		}
 	}
@@ -147,8 +150,6 @@
 		const { site, img, thumb, alt, meta, desc } = settings;
 		let data = `${site}|${img}|${thumb}|${alt}|${meta}|${desc}|`;
 		data += formateResolution();
-		//'1:1_320x320,640x640,1280x1280,1920x1920;4:3_320x240,640x480,1280x960,1920x1440;16:9_320x180,640x360,854x480,1280x720,1920x1080';
-		console.log(data);
 		await sendSettings(data);
 	}
 
@@ -186,22 +187,7 @@
 	<InputText id="thumbnail" bind:inputvalue={settings.thumb} />
 
 	<div class="flex  justify-center items-center flex-wrap">
-		{#each aspectRes as resolution}
-			{#each resolution[1] as res}
-				<label class="grow shrink basis-1/4">
-					<input
-						type="checkbox"
-						class="form-checkbox h-5 w-5 text-gray-600"
-						bind:group={checkedResolution}
-						value={res}
-						checked
-					/>
-					<span class="ml-2 text-gray-700">
-						{res}
-					</span>
-				</label>
-			{/each}
-		{/each}
+		<ResolutionGroup { resolutions } bind:group={checkedResolution}/>
 	</div>
 
 	<Button type="submit">Submit</Button>
@@ -217,6 +203,7 @@
 			<span class="text-green-500">Изображение загружается</span>
 		</PreviewImage>
 	{:else if imageStatus == 'server'}
+		<!-- url функцией чтобы менялась дата-->
 		<PreviewImage src={imgUrl()}>
 			<span class="px-4 text-blue-300">Изображение загружено</span>
 			<form method="get" action={downloadUrl}>
