@@ -21,12 +21,42 @@
 		desc: ''
 	};
 
-	let resolutions = [
-		'320x320','640x640','1280x1280','1920x1920','320x240','640x480','1280x960','1920x1440','320x180','640x360','854x480','1280x720','1920x1080'
+	let aspectRes = [
+		['1:1', ['320x320', '640x640', '1280x1280', '1920x1920']],
+		['4:3', ['320x240', '640x480', '1280x960', '1920x1440']],
+		['16:9', ['320x180', '640x360', '854x480', '1280x720', '1920x1080']]
 	];
-	
+
+	let resolutions = [
+		'320x320',
+		'640x640',
+		'1280x1280',
+		'1920x1920',
+		'320x240',
+		'640x480',
+		'1280x960',
+		'1920x1440',
+		'320x180',
+		'640x360',
+		'854x480',
+		'1280x720',
+		'1920x1080'
+	];
+
 	let checkedResolution = [
-		'320x320','640x640','1280x1280','1920x1920','320x240','640x480','1280x960','1920x1440','320x180','640x360','854x480','1280x720','1920x1080'
+		'320x320',
+		'640x640',
+		'1280x1280',
+		'1920x1920',
+		'320x240',
+		'640x480',
+		'1280x960',
+		'1920x1440',
+		'320x180',
+		'640x360',
+		'854x480',
+		'1280x720',
+		'1920x1080'
 	];
 
 	function fileSelect({ detail: { acceptedFiles } }) {
@@ -107,11 +137,34 @@
 		}
 	}
 
+	function formateResolution() {
+		let out = '';
+
+		for (let aspect of aspectRes) {
+			let str = [];
+			for (let resol of aspect[1]) {
+				if (checkedResolution.includes(resol)) {
+					str.push(resol);
+				}
+			}
+
+			if (str.length > 0) {
+				out += `${aspect[0]}_${str.join()};`;
+			}
+		}
+
+		// Удаление конечной ; проверять бы что это ; но не охото
+		if (out.length > 0) return out.slice(0, -1);
+
+		return out;
+	}
+
 	async function settingsSubmit() {
 		const { site, img, thumb, alt, meta, desc } = settings;
 		let data = `${site}|${img}|${thumb}|${alt}|${meta}|${desc}|`;
-		data +=
-			'1:1_320x320,640x640,1280x1280,1920x1920;4:3_320x240,640x480,1280x960,1920x1440;16:9_320x180,640x360,854x480,1280x720,1920x1080';
+		data += formateResolution(); 
+			//'1:1_320x320,640x640,1280x1280,1920x1920;4:3_320x240,640x480,1280x960,1920x1440;16:9_320x180,640x360,854x480,1280x720,1920x1080';
+		console.log(data);
 		await sendSettings(data);
 	}
 
@@ -133,9 +186,6 @@
 		}
 	}
 
-	$: {
-		console.log(checkedResolution)
-	}
 	onInterval(existImg, 3000);
 </script>
 
@@ -153,7 +203,7 @@
 
 	<div class="flex  justify-center items-center flex-wrap">
 		{#each resolutions as resolution}
-			<label class="grow shrink basis-1/3">
+			<label class="grow shrink basis-1/4">
 				<input
 					type="checkbox"
 					class="form-checkbox h-5 w-5 text-gray-600"
