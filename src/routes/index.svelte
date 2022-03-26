@@ -27,22 +27,6 @@
 		['16:9', ['320x180', '640x360', '854x480', '1280x720', '1920x1080']]
 	];
 
-	let resolutions = [
-		'320x320',
-		'640x640',
-		'1280x1280',
-		'1920x1920',
-		'320x240',
-		'640x480',
-		'1280x960',
-		'1920x1440',
-		'320x180',
-		'640x360',
-		'854x480',
-		'1280x720',
-		'1920x1080'
-	];
-
 	let checkedResolution = [
 		'320x320',
 		'640x640',
@@ -162,8 +146,8 @@
 	async function settingsSubmit() {
 		const { site, img, thumb, alt, meta, desc } = settings;
 		let data = `${site}|${img}|${thumb}|${alt}|${meta}|${desc}|`;
-		data += formateResolution(); 
-			//'1:1_320x320,640x640,1280x1280,1920x1920;4:3_320x240,640x480,1280x960,1920x1440;16:9_320x180,640x360,854x480,1280x720,1920x1080';
+		data += formateResolution();
+		//'1:1_320x320,640x640,1280x1280,1920x1920;4:3_320x240,640x480,1280x960,1920x1440;16:9_320x180,640x360,854x480,1280x720,1920x1080';
 		console.log(data);
 		await sendSettings(data);
 	}
@@ -202,19 +186,21 @@
 	<InputText id="thumbnail" bind:inputvalue={settings.thumb} />
 
 	<div class="flex  justify-center items-center flex-wrap">
-		{#each resolutions as resolution}
-			<label class="grow shrink basis-1/4">
-				<input
-					type="checkbox"
-					class="form-checkbox h-5 w-5 text-gray-600"
-					bind:group={checkedResolution}
-					value={resolution}
-					checked
-				/>
-				<span class="ml-2 text-gray-700">
-					{resolution}
-				</span>
-			</label>
+		{#each aspectRes as resolution}
+			{#each resolution[1] as res}
+				<label class="grow shrink basis-1/4">
+					<input
+						type="checkbox"
+						class="form-checkbox h-5 w-5 text-gray-600"
+						bind:group={checkedResolution}
+						value={res}
+						checked
+					/>
+					<span class="ml-2 text-gray-700">
+						{res}
+					</span>
+				</label>
+			{/each}
 		{/each}
 	</div>
 
